@@ -1,45 +1,100 @@
-# Propuesta Formativa Obligatoria
+📂 chat_basico_Python_PFO1
+ ├── servidor.py          # Servidor concurrente que recibe y guarda mensajes
+ ├── cliente.py           # Cliente que se conecta al servidor y envía mensajes
+ ├── ver_mensajes.py      # Visualiza los registros almacenados en la base de datos
+ ├── chat.db              # Base de datos SQLite generada automáticamente
+ ├── README.md            # Documento descriptivo del proyecto
+🚀 Funcionamiento
+🧠 Servidor (servidor.py)
+Inicializa la base de datos y crea la tabla mensajes si no existe.
 
-## TP: Chat Básico Cliente-Servidor con Sockets y Base de Datos
+Escucha en el puerto 5000 y acepta conexiones de varios clientes.
 
-### Objetivo
-Configurar un **servidor de sockets en Python** que reciba mensajes de clientes, los guarde en una base de datos SQLite y envíe confirmaciones.  
-Se busca aplicar buenas prácticas de **modularización**, **manejo de errores** y documentación del código.
+Cada cliente es manejado en un hilo independiente (thread).
 
----
+Cada mensaje recibido se guarda con:
 
-### Servidor
-- Escucha en `localhost:5000`.
-- Funciones principales:
-  - Inicializar el socket.
-  - Aceptar conexiones y recibir mensajes.
-  - Guardar mensajes en la base de datos (`id`, `contenido`, `fecha_envio`, `ip_cliente`).
-  - Manejar errores (puerto ocupado, DB no accesible).
-  - Responder al cliente con:  
-    ```
-    Mensaje recibido: <timestamp>
-    ```
+ID autoincremental
 
----
+Contenido
 
-### Cliente
-- Se conecta al servidor en `localhost:5000`.
-- Permite enviar múltiples mensajes hasta que el usuario escriba `éxito`.
-- Muestra la respuesta del servidor para cada mensaje.
+Fecha y hora de envío
 
----
+IP del cliente
 
-### Base de Datos
-- Usar **SQLite** (`sqlite3`).
-- Tabla `mensajes` con los campos:
-  - `id` (INTEGER, PRIMARY KEY AUTOINCREMENT)
-  - `contenido` (TEXT)
-  - `fecha_envio` (TEXT)
-  - `ip_cliente` (TEXT)
+Si el cliente envía "éxito", el servidor cierra su conexión.
 
----
+💬 Cliente (cliente.py)
+Se conecta al servidor en localhost:5000.
 
-### Recomendaciones
-- Comentar cada sección clave del código, por ejemplo:
-  ```python
-  # Configuración del socket TCP/IP
+Permite enviar múltiples mensajes o salir con “éxito”.
+
+Muestra la respuesta del servidor para cada mensaje.
+
+📊 Visualización de Mensajes (ver_mensajes.py)
+Permite listar los mensajes guardados en la base de datos chat.db:
+
+
+ID: 1 | Mensaje: exito | Fecha: 2025-11-04 02:15:29 | IP: 127.0.0.1
+ID: 2 | Mensaje: exito | Fecha: 2025-11-04 02:15:35 | IP: 127.0.0.1
+ID: 3 | Mensaje: exito | Fecha: 2025-11-04 02:15:40 | IP: 127.0.0.1
+ID: 4 | Mensaje: exito | Fecha: 2025-11-04 02:30:08 | IP: 127.0.0.1
+ID: 5 | Mensaje: exito | Fecha: 2025-11-04 02:30:19 | IP: 127.0.0.1
+ID: 6 | Mensaje: exito | Fecha: 2025-11-04 02:30:29 | IP: 127.0.0.1
+🧪 Pruebas de Ejecución
+🔹 Ejecución del Servidor
+
+PS C:\Users\Usuario\Desktop\Redes\ProgramacionSobreRedes\PFO1> py servidor.py
+Servidor escuchando en localhost:5000...
+Nuevo cliente conectado: ('127.0.0.1', 56407)
+[2025-11-04 02:30:08] 127.0.0.1 dijo: exito
+Nuevo cliente conectado: ('127.0.0.1', 56408)
+[2025-11-04 02:30:19] 127.0.0.1 dijo: exito
+Nuevo cliente conectado: ('127.0.0.1', 56409)
+[2025-11-04 02:30:29] 127.0.0.1 dijo: exito
+🔹 Cliente 1 – juan
+
+PS C:\Users\Usuario\Desktop\Redes\ProgramacionSobreRedes\PFO1> py cliente.py
+Ingrese un nombre para este cliente: juan
+juan conectado al servidor. Escribe 'éxito' para salir.
+
+juan -> exito
+Servidor -> Mensaje recibido (2025-11-04 02:30:08)
+juan ->
+🔹 Cliente 2 – mario
+
+PS C:\Users\Usuario\Desktop\Redes\ProgramacionSobreRedes\PFO1> py cliente.py
+Ingrese un nombre para este cliente: mario
+mario conectado al servidor. Escribe 'éxito' para salir.
+
+mario -> exito
+Servidor -> Mensaje recibido (2025-11-04 02:30:19)
+mario ->
+🔹 Cliente 3 – lulu
+
+PS C:\Users\Usuario\Desktop\Redes\ProgramacionSobreRedes\PFO1> py cliente.py
+Ingrese un nombre para este cliente: lulu
+lulu conectado al servidor. Escribe 'éxito' para salir.
+
+lulu -> exito
+Servidor -> Mensaje recibido (2025-11-04 02:30:29)
+lulu ->
+🔹 Visualización con ver_mensajes.py
+
+PS C:\Users\Usuario\Desktop\Redes\ProgramacionSobreRedes\PFO1> py ver_mensajes.py
+
+📋 Lista de mensajes guardados:
+
+ID: 1 | Mensaje: exito | Fecha: 2025-11-04 02:15:29 | IP: 127.0.0.1
+ID: 2 | Mensaje: exito | Fecha: 2025-11-04 02:15:35 | IP: 127.0.0.1
+ID: 3 | Mensaje: exito | Fecha: 2025-11-04 02:15:40 | IP: 127.0.0.1
+ID: 4 | Mensaje: exito | Fecha: 2025-11-04 02:30:08 | IP: 127.0.0.1
+ID: 5 | Mensaje: exito | Fecha: 2025-11-04 02:30:19 | IP: 127.0.0.1
+ID: 6 | Mensaje: exito | Fecha: 2025-11-04 02:30:29 | IP: 127.0.0.1
+🧩 Concurrencia Implementada
+El servidor utiliza threading.Thread para permitir que varios clientes se comuniquen simultáneamente.
+Cada cliente se ejecuta en un hilo independiente y el acceso a la base de datos se sincroniza mediante threading.Lock(), evitando errores por escritura simultánea.
+
+✅ Versión final funcional.  
+⚙️ Servidor concurrente con base de datos integrada.  
+💬 Clientes múltiples con identificación individual.
